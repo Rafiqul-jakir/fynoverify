@@ -1,8 +1,8 @@
 # fynoVerify: Developer Documentation
 
-Package: `rafiquljakir/fynoverify` · Namespace: `Rafiquljakir\FynoVerify` · Repository: <https://github.com/Rafiqul-jakir/fynoverify> · License: MIT
+Package: [`rafiquljakir/fynoverify`](https://packagist.org/packages/rafiquljakir/fynoverify) · Namespace: `Rafiquljakir\FynoVerify` · Repository: <https://github.com/Rafiqul-jakir/fynoverify> · License: MIT
 
-> **Status: prototype (0.1.x).** The code was written without PHP, Composer or a Laravel install available, so it has not yet been executed. The supported versions (PHP `^8.2`, Laravel 11 and 12) are *declared*, not verified. Run `composer install && composer test` before relying on anything here, and narrow the version constraints to what actually passes.
+> **Status: early release (0.x).** Commands, options and report fields may still change before 1.0. Declared support: PHP `^8.2`, Laravel 11 and 12.
 
 ---
 
@@ -45,43 +45,17 @@ A fourth command, `fyno:doctor`, diagnoses installation and configuration proble
 | Read or judge test file contents | Evidence files are only checked for existence and readability. |
 | Measure line or branch coverage | The metric is **declared test-evidence coverage**, not code coverage. |
 | Declare a route secure or vulnerable | It issues no security verdict. Plan items are *suggested scenarios*. |
-| Make network calls, send telemetry, or call AI services | None exist in the MVP. |
+| Make network calls, send telemetry, or call AI services | None exist in this release. |
 | Execute controllers, run migrations, or touch the database | It is read-only. |
 
 ---
 
 ## 2. Installation
 
-Requirements: PHP 8.2+, Composer 2, Laravel 11 or 12 (declared).
-
-Until the package is listed on Packagist, install it from GitHub. Add a repository entry to your application's `composer.json`:
-
-```json
-{
-    "repositories": [
-        { "type": "vcs", "url": "https://github.com/Rafiqul-jakir/fynoverify.git" }
-    ]
-}
-```
-
-```bash
-composer require --dev rafiquljakir/fynoverify:dev-main
-```
-
-Once it is on Packagist, remove the `repositories` entry and run:
+Requirements: PHP 8.2+, Composer 2, Laravel 11 or 12.
 
 ```bash
 composer require --dev rafiquljakir/fynoverify
-```
-
-For local development of the package itself, use a path repository:
-
-```json
-{
-    "repositories": [
-        { "type": "path", "url": "../fynoverify", "options": { "symlink": true } }
-    ]
-}
 ```
 
 ### Verify discovery
@@ -103,6 +77,8 @@ php artisan vendor:publish --tag=fynoVerify-config
 This copies `config/fynoVerify.php` into your app. Without it the package works on defaults, and a partially published config is fine because omitted keys fall back to defaults.
 
 > Because the package is a `require-dev` dependency, the commands are absent after `composer install --no-dev`.
+
+To work on the package itself, clone the repository and see [section 13](#13-testing-the-package).
 
 ---
 
@@ -758,20 +734,19 @@ Under Testbench, stderr and stdout share one buffer, so error text appears in `A
 
 ### Known gaps
 
-The suite has not been run yet. There is no Windows path test, no real multi-version matrix run, and no end-to-end test that installs the package into a fresh Laravel application. The CI workflow (`.github/workflows/tests.yml`) defines a PHP 8.2 to 8.4 and Laravel 11 to 12 matrix, but it has not run.
+There is no Windows path test and no end-to-end test that installs the package into a fresh Laravel application. The CI workflow (`.github/workflows/tests.yml`) runs a PHP 8.2 to 8.4 and Laravel 11 to 12 matrix.
 
 ---
 
 ## 14. Releasing
 
-1. Run all checks locally (section 13) and fix failures. Narrow the `require` constraints to what passes.
-2. Do **not** add a `version` field to `composer.json`; Packagist reads Git tags.
-3. Update `CHANGELOG.md` (only features that exist and are tested).
-4. Tag: `git tag -a v0.1.0-alpha.1 -m "First alpha" && git push origin v0.1.0-alpha.1`. Use `v0.1.0` once CI is green.
-5. Submit `https://github.com/Rafiqul-jakir/fynoverify` at <https://packagist.org/packages/submit> and enable the GitHub webhook so new tags are picked up.
-6. After listing, remove the GitHub `repositories` block from the README and installation docs.
+1. Run all checks locally (section 13) and make sure CI is green.
+2. Update `CHANGELOG.md` (only features that exist and are tested).
+3. Do **not** add a `version` field to `composer.json`; Packagist reads Git tags.
+4. Tag and push: `git tag -a v0.1.0 -m "v0.1.0" && git push origin v0.1.0`.
+5. Packagist picks up the tag automatically through the GitHub webhook. If the webhook is not enabled, open the package page and click **Update**.
 
-Follow semantic versioning. Changing the report `schema_version`, command signatures, exit codes, config keys, route ID scheme, vendor name or namespace is a breaking change.
+Follow semantic versioning. Changing the report `schema_version`, command signatures, exit codes, config keys, the route ID scheme, the vendor name or the namespace is a breaking change.
 
 ---
 
@@ -810,8 +785,8 @@ Global and custom middleware are invisible to route metadata, so it gets an `acc
 **Can I commit the JSON reports?**
 You can, but treat them as internal documentation because they describe your API surface.
 
-**Which Laravel versions work?**
-Laravel 11 and 12 are declared. Nothing has been verified yet, so let CI show what passes.
+**Which Laravel versions are supported?**
+Laravel 11 and 12 on PHP 8.2 or newer, as declared in `composer.json` and exercised by the CI matrix.
 
 ---
 
@@ -819,7 +794,7 @@ Laravel 11 and 12 are declared. Nothing has been verified yet, so let CI show wh
 
 ### Current limitations
 
-- Prototype: not yet executed, versions unverified.
+- Early release: expect changes before 1.0.
 - Middleware is shown as declared on the route. Global middleware and unexpanded groups (`api`, `web`) are invisible, so authentication signals are heuristics.
 - Plan suggestions cannot know your roles, tenants, ownership rules or response contracts, and they list what you need to supply.
 - Declared evidence is not proof of meaningful tests.
